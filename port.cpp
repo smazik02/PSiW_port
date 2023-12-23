@@ -8,17 +8,15 @@
 #include <vector>
 
 struct Ship {
-    unsigned int id;
-    unsigned int weight;
-    unsigned int sleep;
+    int id;
+    int weight;
+    int sleep;
 };
 
 std::vector<Ship *> ships_vec;
 std::vector<pthread_t> ship_threads;
 pthread_mutex_t dock_mutex;
 pthread_cond_t dock_cond;
-// pthread_mutex_t tugboat_mutex;
-// pthread_cond_t tugboat_cond;
 
 int docks, tugboats, ships;
 int tugboat_semaphore, dock_semaphore;
@@ -42,7 +40,7 @@ int main() {
     std::cin >> ships;
     ship_threads.reserve(ships);
 
-    for (int i = 0; i < ships; i++) {
+    for (int i = 1; i <= ships; i++) {
         std::cout << "\nShip " << i << "\n";
         std::cout << "Enter the ship's weight >";
         std::cin >> ship_weight;
@@ -71,21 +69,21 @@ int main() {
 
 void *ship_action(void *ptr) {
     Ship *ship = (Ship *)ptr;
-    printf("Ship %d\n", ship->id);
-    
+    // printf("Ship %d\n", ship->id);
+
     pthread_mutex_lock(&dock_mutex);
     while (dock_semaphore <= 0 || tugboat_semaphore < ship->weight) {
         printf("Ship %d waiting\n", ship->id);
         pthread_cond_wait(&dock_cond, &dock_mutex);
     }
-    --dock_semaphore;
+    dock_semaphore--;
     tugboat_semaphore -= ship->weight;
     printf("Ship %d enters port, %d docks and %d tugboats left, staying for %d seconds\n", ship->id, dock_semaphore, tugboat_semaphore, ship->sleep);
     pthread_mutex_unlock(&dock_mutex);
     sleep(ship->sleep);
 
     pthread_mutex_lock(&dock_mutex);
-    ++dock_semaphore;
+    dock_semaphore++;
     tugboat_semaphore += ship->weight;
     printf("Ship %d leaves port, %d docks and %d tugboats left\n", ship->id, dock_semaphore, tugboat_semaphore);
     pthread_mutex_unlock(&dock_mutex);

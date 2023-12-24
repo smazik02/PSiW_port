@@ -1,9 +1,8 @@
 #include <pthread.h>
-#include <stdlib.h>
 #include <unistd.h>
 
 #include <cstdio>
-#include <iomanip>
+#include <cstdlib>
 #include <iostream>
 #include <vector>
 

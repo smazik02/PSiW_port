@@ -1,10 +1,9 @@
 #include <pthread.h>
-#include <stdlib.h>
 #include <unistd.h>
 
 #include <cstdio>
+#include <cstdlib>
 #include <functional>
-#include <iomanip>
 #include <iostream>
 #include <random>
 #include <vector>
@@ -30,7 +29,7 @@ std::mt19937 gen(rd());
 
 void *ship_action(void *i);
 
-int random(int low, int high){
+int random(int low, int high) {
     std::uniform_int_distribution<> dist(low, high);
     return dist(gen);
 }

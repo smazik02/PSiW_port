@@ -35,6 +35,8 @@ int random(int low, int high) {
 }
 
 int main() {
+    int max_sleep, max_wait;
+
     dock_mutex = PTHREAD_MUTEX_INITIALIZER;
     dock_cond = PTHREAD_COND_INITIALIZER;
 
@@ -50,12 +52,18 @@ int main() {
     std::cin >> ships;
     ship_threads.reserve(ships);
 
+    std::cout << "How long a ship waits to enter the port? >";
+    std::cin >> max_wait;
+
+    std::cout << "How long is the maximum time in port? >";
+    std::cin >> max_sleep;
+
     for (int i = 1; i <= ships; i++) {
         Ship *ship = (Ship *)malloc(sizeof(Ship));
         ship->id = i;
         ship->weight = random(1, tugboats / 2);
-        ship->wait = random(1, 10);
-        ship->sleep = random(0, 10);
+        ship->wait = random(0, max_wait);
+        ship->sleep = random(0, max_sleep);
         printf("Ship %d, weight %d, wait %d, sleep %d\n", ship->id, ship->weight, ship->wait, ship->sleep);
         ships_vec.push_back(ship);
     }

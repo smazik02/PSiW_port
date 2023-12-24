@@ -12,6 +12,7 @@
 struct Ship {
     int id;
     int weight;
+    int wait;
     int sleep;
 };
 
@@ -54,8 +55,9 @@ int main() {
         Ship *ship = (Ship *)malloc(sizeof(Ship));
         ship->id = i;
         ship->weight = random(1, tugboats / 2);
-        ship->sleep = random(1, 10);
-        printf("Ship %d, weight %d, sleep %d\n", ship->id, ship->weight, ship->weight);
+        ship->wait = random(1, 10);
+        ship->sleep = random(0, 10);
+        printf("Ship %d, weight %d, wait %d, sleep %d\n", ship->id, ship->weight, ship->wait, ship->sleep);
         ships_vec.push_back(ship);
     }
 
@@ -76,6 +78,7 @@ void *ship_action(void *ptr) {
     Ship *ship = (Ship *)ptr;
     // printf("Ship %d\n", ship->id);
 
+    sleep(ship->wait);
     pthread_mutex_lock(&dock_mutex);
     while (dock_semaphore <= 0 || tugboat_semaphore < ship->weight) {
         printf("Ship %d waiting\n", ship->id);

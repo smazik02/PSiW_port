@@ -2,7 +2,6 @@
 #include <unistd.h>
 
 #include <cstdio>
-#include <cstdlib>
 #include <functional>
 #include <iostream>
 #include <random>
@@ -59,7 +58,7 @@ int main() {
     std::cin >> max_sleep;
 
     for (int i = 1; i <= ships; i++) {
-        Ship *ship = (Ship *)malloc(sizeof(Ship));
+        Ship *ship = new Ship;
         ship->id = i;
         ship->weight = random(1, tugboats / 2);
         ship->wait = random(0, max_wait);
@@ -70,14 +69,18 @@ int main() {
 
     printf("\n");
 
-    for (auto ship = ships_vec.begin(); ship != ships_vec.end(); ship++) {
+    for (auto ship : ships_vec) {
         pthread_t new_thread;
-        pthread_create(&new_thread, nullptr, ship_action, (void *)*ship);
+        pthread_create(&new_thread, nullptr, ship_action, (void *)ship);
         ship_threads.push_back(new_thread);
     }
 
-    for (auto ship = ship_threads.begin(); ship != ship_threads.end(); ship++) {
-        pthread_join(*ship, nullptr);
+    for (auto ship : ship_threads) {
+        pthread_join(ship, nullptr);
+    }
+
+    for (auto ship : ships_vec) {
+        delete ship;
     }
 }
 

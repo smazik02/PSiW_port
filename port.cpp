@@ -2,7 +2,6 @@
 #include <unistd.h>
 
 #include <cstdio>
-#include <cstdlib>
 #include <iostream>
 #include <vector>
 
@@ -46,7 +45,7 @@ int main() {
         std::cout << "Enter how long the ship stays in the dock >";
         std::cin >> ship_sleep;
 
-        Ship *ship = (Ship *)malloc(sizeof(Ship));
+        Ship *ship = new Ship;
         ship->id = i;
         ship->weight = ship_weight;
         ship->sleep = ship_sleep;
@@ -55,14 +54,18 @@ int main() {
 
     std::cout << std::endl;
 
-    for (auto ship = ships_vec.begin(); ship != ships_vec.end(); ship++) {
+    for (auto ship : ships_vec) {
         pthread_t new_thread;
-        pthread_create(&new_thread, nullptr, ship_action, (void *)*ship);
+        pthread_create(&new_thread, nullptr, ship_action, (void *)ship);
         ship_threads.push_back(new_thread);
     }
 
-    for (auto ship = ship_threads.begin(); ship != ship_threads.end(); ship++) {
-        pthread_join(*ship, nullptr);
+    for (auto ship : ship_threads) {
+        pthread_join(ship, nullptr);
+    }
+
+    for (auto ship : ships_vec) {
+        delete ship;
     }
 }
 
